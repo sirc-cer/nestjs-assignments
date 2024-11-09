@@ -1,17 +1,21 @@
-import { Controller, Param, Get, ParseIntPipe } from '@nestjs/common';
+import { Controller, Param, Get, NotFoundException } from '@nestjs/common';
 
 @Controller('assignments')
 export class AssignmentsController {
-    @Get('prime/:number')
-    isPrime(@Param('number', ParseIntPipe) number: number): { isPrime : boolean} {
-        const result = this.checkPrime(number);
-        return { isPrime: result };
-    }
-    private checkPrime(num: number): boolean {
-        if(num <= 1) return false;
-        for (let i=2; i <= Math.sqrt(num); i++){
-            if(num % i === 0) return false;
+    @Get('factorial/:number')
+    getFactorial(@Param('number') number: string): { factorial: number }{
+        const num = parseInt(number, 10);
+
+        if(isNaN(num) || num < 0) {
+            throw new NotFoundException('INVALID!');
         }
-        return true;
+        const factorial = this.calculateFactorial(num);
+        return { factorial };
     }
+
+        private calculateFactorial(num: number): number{
+            if(num === 0 || num === 1) return 1;
+                return num * this.calculateFactorial(num - 1);
+            
+        }
 }
